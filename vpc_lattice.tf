@@ -60,7 +60,8 @@ data "aws_iam_policy_document" "demo_service_network_auth" {
   }
 }
 
-data "aws_iam_policy_document" "hello_service_auth" {
+
+data "aws_iam_policy_document" "random_service_auth" {
   statement {
     sid    = "AllowClientVPC"
     effect = "Allow"
@@ -87,7 +88,8 @@ resource "aws_vpclattice_auth_policy" "demo" {
   policy              = data.aws_iam_policy_document.demo_service_network_auth.json
 }
 
-resource "aws_vpclattice_auth_policy" "hello_service" {
-  resource_identifier = aws_vpclattice_service.hello.arn
-  policy              = data.aws_iam_policy_document.hello_service_auth.json
+
+resource "aws_vpclattice_auth_policy" "random_service" {
+  resource_identifier = aws_vpclattice_service.random.arn
+  policy              = data.aws_iam_policy_document.random_service_auth.json
 }
