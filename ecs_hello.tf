@@ -29,6 +29,28 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+data "aws_iam_policy_document" "ecs_hello_lattice_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ecs_hello_lattice" {
+  name               = "ecs-hello-lattice"
+  assume_role_policy = data.aws_iam_policy_document.ecs_hello_lattice_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_hello_lattice_policy" {
+  role       = aws_iam_role.ecs_hello_lattice.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECSInfrastructureRolePolicyForVpcLattice"
+}
+
 resource "aws_security_group" "ecs_hello" {
   name_prefix = "ecs-hello-"
   vpc_id      = aws_vpc.server_hello.id
@@ -66,6 +88,7 @@ resource "aws_ecs_task_definition" "hello" {
       image = "nginx:latest"
       portMappings = [
         {
+          name          = "nginx"
           containerPort = 80
           protocol      = "tcp"
         }
@@ -99,13 +122,10 @@ resource "aws_ecs_service" "hello" {
     security_groups  = [aws_security_group.ecs_hello.id]
     assign_public_ip = true
   }
-}
 
-resource "aws_vpclattice_target_group_attachment" "hello" {
-  target_group_identifier = aws_vpclattice_target_group.hello.id
-
-  target {
-    id   = aws_ecs_service.hello.id
-    port = 80
+  vpc_lattice_configurations {
+    role_arn         = aws_iam_role.ecs_hello_lattice.arn
+    target_group_arn = aws_vpclattice_target_group.hello.arn
+    port_name        = "nginx"
   }
 }
