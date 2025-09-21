@@ -100,3 +100,12 @@ resource "aws_ecs_service" "hello" {
     assign_public_ip = true
   }
 }
+
+resource "aws_vpclattice_target_group_attachment" "hello" {
+  target_group_identifier = aws_vpclattice_target_group.hello.id
+
+  target {
+    id   = aws_ecs_service.hello.id
+    port = 80
+  }
+}

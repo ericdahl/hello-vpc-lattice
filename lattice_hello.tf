@@ -9,9 +9,9 @@ resource "aws_vpclattice_target_group" "hello" {
     vpc_identifier   = aws_vpc.server_hello.id
 
     health_check {
-      enabled                        = true
-      healthy_threshold_count        = 2
-      health_check_interval_seconds  = 30
+      enabled                       = true
+      healthy_threshold_count       = 2
+      health_check_interval_seconds = 30
       path                          = "/"
       port                          = 80
       protocol                      = "HTTP"

@@ -30,7 +30,7 @@ data "archive_file" "lambda_goodbye" {
   output_path = "${path.module}/goodbye-function.zip"
 
   source {
-    content = <<EOF
+    content  = <<EOF
 import json
 
 def lambda_handler(event, context):
@@ -46,11 +46,11 @@ EOF
 resource "aws_lambda_function" "goodbye" {
   filename         = data.archive_file.lambda_goodbye.output_path
   function_name    = "goodbye-function"
-  role            = aws_iam_role.lambda_goodbye.arn
-  handler         = "lambda_function.lambda_handler"
+  role             = aws_iam_role.lambda_goodbye.arn
+  handler          = "lambda_function.lambda_handler"
   source_code_hash = data.archive_file.lambda_goodbye.output_base64sha256
-  runtime         = "python3.12"
-  timeout         = 10
+  runtime          = "python3.12"
+  timeout          = 10
 
   depends_on = [
     aws_iam_role_policy_attachment.lambda_goodbye_basic,
