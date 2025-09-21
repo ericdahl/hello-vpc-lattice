@@ -41,6 +41,36 @@ resource "aws_vpclattice_auth_policy" "demo" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowAllVPCs"
+        Effect = "Allow"
+        Principal = {
+          AWS = "*"
+        }
+        Action = [
+          "vpc-lattice-svcs:Invoke"
+        ]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "vpc-lattice-svcs:SourceVpc" = [
+              aws_vpc.client.id,
+              aws_vpc.server_hello.id,
+              aws_vpc.server_goodbye.id
+            ]
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_vpclattice_auth_policy" "hello_service" {
+  resource_identifier = aws_vpclattice_service.hello.arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
         Sid    = "AllowClientVPC"
         Effect = "Allow"
         Principal = {

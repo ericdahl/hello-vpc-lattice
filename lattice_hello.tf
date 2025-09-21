@@ -74,7 +74,7 @@ resource "aws_vpclattice_listener_rule" "hello" {
       path_match {
         case_sensitive = false
         match {
-          prefix = "/hello"
+          prefix = "/"
         }
       }
     }
