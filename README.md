@@ -6,6 +6,8 @@ Basic Hello World demo of AWS VPC Lattice with Terraform:
 - Lambda Function in "vpc-goodbye" returning "Goodbye"
 - VPC Lattice Service "random-service" which forwards traffic to both "hello" and "goodbye" targets
 - EC2 test instance in "vpc-client" used to invoke "random-service"
+- redis/valkey instance in "vpc-redis" just running an Elasticsearch endpoint
+    - this is to demo the Resource Configuration type of VPC Lattice, rather than traditional VPC layer 7 type. Resource Configuration supports TCP directly
 
 Notes:
 - VPCs have no direct interconnectivity (peering, TGW, PrivateLink) and are all using same CIDR
@@ -28,4 +30,8 @@ aws ssm start-session --target $INSTANCE_ID
 <head>
 <title>Welcome to nginx!</title>
 ...
+
+[root@ip-10-0-1-149 ~]# valkey-cli -h snra-0288f748319cecde5.rcfg-061bb95e7c2d2f44c.4232ccc.vpc-lattice-rsc.us-east-1.on.aws -p 6379 --tls
+snra-0288f748319cecde5.rcfg-061bb95e7c2d2f44c.4232ccc.vpc-lattice-rsc.us-east-1.on.aws:6379> ping
+PONG
 ```
