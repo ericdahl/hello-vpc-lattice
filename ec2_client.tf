@@ -51,6 +51,13 @@ resource "aws_instance" "client" {
   vpc_security_group_ids = [aws_security_group.ec2_client.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_ssm_profile.name
 
+  user_data_base64 = base64encode(<<-EOF
+    #!/bin/bash
+    dnf update -y
+    dnf install -y nc valkey
+    EOF
+  )
+
   tags = {
     Name = "vpc-lattice-client"
   }

@@ -17,7 +17,7 @@ resource "aws_vpclattice_resource_configuration" "redis" {
   protocol    = "TCP"
 
   resource_configuration_definition {
-    
+
     dns_resource {
       domain_name     = aws_elasticache_serverless_cache.hello_cache.endpoint[0].address
       ip_address_type = "IPV4"

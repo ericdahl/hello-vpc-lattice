@@ -35,3 +35,8 @@ aws ssm start-session --target $INSTANCE_ID
 snra-0288f748319cecde5.rcfg-061bb95e7c2d2f44c.4232ccc.vpc-lattice-rsc.us-east-1.on.aws:6379> ping
 PONG
 ```
+
+## TODO
+
+- ECS on EC2 service?
+- more fine grained rules
