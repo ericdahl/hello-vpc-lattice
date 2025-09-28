@@ -16,27 +16,8 @@ resource "aws_vpclattice_service_network_vpc_association" "client" {
   }
 }
 
-resource "aws_vpclattice_service_network_vpc_association" "server_hello" {
-  vpc_identifier             = aws_vpc.server_hello.id
-  service_network_identifier = aws_vpclattice_service_network.demo.id
-
-  tags = {
-    Name = "server-hello-vpc-association"
-  }
-}
-
-resource "aws_vpclattice_service_network_vpc_association" "server_goodbye" {
-  vpc_identifier             = aws_vpc.server_goodbye.id
-  service_network_identifier = aws_vpclattice_service_network.demo.id
-
-  tags = {
-    Name = "server-goodbye-vpc-association"
-  }
-}
-
 data "aws_iam_policy_document" "demo_service_network_auth" {
   statement {
-    sid    = "AllowAllVPCs"
     effect = "Allow"
 
     principals {
@@ -53,8 +34,6 @@ data "aws_iam_policy_document" "demo_service_network_auth" {
       variable = "vpc-lattice-svcs:SourceVpc"
       values = [
         aws_vpc.client.id,
-        aws_vpc.server_hello.id,
-        aws_vpc.server_goodbye.id
       ]
     }
   }
