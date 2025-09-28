@@ -114,7 +114,7 @@ resource "aws_ecs_service" "hello" {
   name            = "hello-service"
   cluster         = aws_ecs_cluster.hello.id
   task_definition = aws_ecs_task_definition.hello.arn
-  desired_count   = 1
+  desired_count   = 3
   launch_type     = "FARGATE"
 
   network_configuration {
