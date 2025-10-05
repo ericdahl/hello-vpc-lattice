@@ -40,7 +40,7 @@ output "redis" {
 
 resource "aws_vpclattice_access_log_subscription" "redis" {
   resource_identifier = aws_vpclattice_resource_configuration.redis.id
-  destination_arn    = aws_cloudwatch_log_group.redis.arn
+  destination_arn     = aws_cloudwatch_log_group.redis.arn
 }
 
 resource "aws_cloudwatch_log_group" "redis" {

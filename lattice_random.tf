@@ -37,7 +37,7 @@ resource "aws_vpclattice_listener" "random" {
 
 resource "aws_vpclattice_access_log_subscription" "random" {
   resource_identifier = aws_vpclattice_service.random.id
-  destination_arn    = aws_cloudwatch_log_group.random.arn
+  destination_arn     = aws_cloudwatch_log_group.random.arn
 }
 
 resource "aws_cloudwatch_log_group" "random" {

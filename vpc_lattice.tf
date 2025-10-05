@@ -75,7 +75,7 @@ resource "aws_vpclattice_auth_policy" "random_service" {
 
 resource "aws_vpclattice_access_log_subscription" "service_network" {
   resource_identifier = aws_vpclattice_service_network.demo.id
-  destination_arn    = aws_cloudwatch_log_group.service_network.arn
+  destination_arn     = aws_cloudwatch_log_group.service_network.arn
 }
 
 resource "aws_cloudwatch_log_group" "service_network" {

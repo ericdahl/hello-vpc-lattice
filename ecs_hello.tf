@@ -133,5 +133,5 @@ resource "aws_ecs_service" "hello" {
     aws_iam_role_policy_attachment.ecs_task_execution_role_policy,
     aws_iam_role_policy_attachment.ecs_hello_lattice_policy
   ]
-  
+
 }
