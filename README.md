@@ -38,5 +38,7 @@ PONG
 
 ## TODO
 
-- ECS on EC2 service?
+- ECS on EC2 service? cleanup
+    - remove capacity provider
+    - debug failed HCs for whoami
 - more fine grained rules

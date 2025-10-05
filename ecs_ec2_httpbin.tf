@@ -167,15 +167,14 @@ resource "aws_ecs_task_definition" "httpbin" {
 
   container_definitions = jsonencode([
     {
-      name              = "httpbin"
-      image             = "kennethreitz/httpbin"
-      memory            = 512
-      memoryReservation = 256
+      name   = "httpbin"
+      image  = "traefik/whoami"
+      memory = 128
       portMappings = [
         {
           name          = "httpbin"
           containerPort = 80
-          hostPort      = 80
+          hostPort      = 0
           protocol      = "tcp"
         }
       ]
@@ -200,7 +199,7 @@ resource "aws_ecs_service" "httpbin" {
   name            = "httpbin"
   cluster         = aws_ecs_cluster.httpbin.id
   task_definition = aws_ecs_task_definition.httpbin.arn
-  desired_count   = 4
+  desired_count   = 10
   launch_type     = "EC2"
 
   vpc_lattice_configurations {

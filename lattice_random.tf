@@ -31,6 +31,10 @@ resource "aws_vpclattice_listener" "random" {
         target_group_identifier = aws_vpclattice_target_group.goodbye.id
         weight                  = 50
       }
+      target_groups {
+        target_group_identifier = aws_vpclattice_target_group.httpbin.id
+        weight                  = 50
+      }
     }
   }
 }
