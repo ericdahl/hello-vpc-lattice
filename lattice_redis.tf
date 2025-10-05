@@ -37,3 +37,13 @@ resource "aws_vpclattice_service_network_resource_association" "redis" {
 output "redis" {
   value = aws_vpclattice_service_network_resource_association.redis.dns_entry[0].domain_name
 }
+
+resource "aws_vpclattice_access_log_subscription" "redis" {
+  resource_identifier = aws_vpclattice_resource_configuration.redis.id
+  destination_arn    = aws_cloudwatch_log_group.redis.arn
+}
+
+resource "aws_cloudwatch_log_group" "redis" {
+  name              = "lattice-resource-redis"
+  retention_in_days = 7
+}
