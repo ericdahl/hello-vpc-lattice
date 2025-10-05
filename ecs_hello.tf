@@ -111,7 +111,7 @@ resource "aws_cloudwatch_log_group" "hello" {
 }
 
 resource "aws_ecs_service" "hello" {
-  name            = "hello-service"
+  name            = "hello"
   cluster         = aws_ecs_cluster.hello.id
   task_definition = aws_ecs_task_definition.hello.arn
   desired_count   = 3
@@ -128,4 +128,10 @@ resource "aws_ecs_service" "hello" {
     target_group_arn = aws_vpclattice_target_group.hello.arn
     port_name        = "nginx"
   }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.ecs_task_execution_role_policy,
+    aws_iam_role_policy_attachment.ecs_hello_lattice_policy
+  ]
+  
 }
