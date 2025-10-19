@@ -36,6 +36,72 @@ snra-0288f748319cecde5.rcfg-061bb95e7c2d2f44c.4232ccc.vpc-lattice-rsc.us-east-1.
 PONG
 ```
 
+## Notes
+
+- Support for:
+    - ECS (EC2 or Fargate)
+    - EKS
+    - Lambda
+- IAM
+- Internet Ingress not directly supported
+    - requires setting up ALB or NLB and forwarding to proxy, e.g., nginx
+        - see <https://github.com/aws-solutions-library-samples/guidance-for-external-connectivity-amazon-vpc-lattice>
+
+### Components
+
+- Service Network - top level logical grouping
+    - can have security policies
+    - can share via RAM to other accounts
+- Service Network VPC Association (`aws_vpclattice_service_network_vpc_association`)
+    - allows clients within this VPC to access service network
+    - optional security groups
+    - a VPC can only be _associated_ to one service network
+- Service Network VPC Endpoint
+    - similar but using standard PrivateLink endpoints
+    - enables VPC to connect to one _or more_ service networks
+    - anything with network access to VPC Endpoint can use it, e.g., data center with DX
+- Lattice Services (`aws_vpclattice_service`)
+    - original feature
+    - endpoint to connect to
+    - protocols supported: HTTP, HTTPS, gRPC, TLS
+        - plain TCP _not_ supported
+    - Sub-components:
+        - Listeners (`aws_vpclattice_listener`)
+            - protocol - HTTP, HTTPS or TLS_PASSTHROUGH (_no plain TCP_)
+            - port
+            - default action - forward or fixed response
+        - Routing Rules (`aws_vpclattice_listener_rule`)
+            - match/action logic
+                - can have multiple rules routing to different TGs
+            - match
+                - HTTP header/method/path - 
+                    - _no support for query parameter_
+                    - prefix/contains/exact
+            - action
+                - fixed response, or forward to TG
+                - weight - determines percentage of traffic to one vs other
+        - Target Groups (`aws_vpclattice_target_group`)
+            - type: IP, Lambda, Instance or ALB
+            - health check - HTTP path/timeout/interval
+            - port
+            - protocol: HTTP or HTTPS
+- Lattice VPC Resources
+    - newer feature
+        - more general than Services. Supports TCP
+    - IP Address, DNS target or AWS Managed Resource (e.g., RDS)
+    - Sub-components
+        - Resource Gateway (`aws_vpclattice_resource_gateway`)
+            - Subnets
+            - IPv4 addr per ENI (?)
+        - Resource Configuration (`aws_vpclattice_resource_configuration`)
+            - protocol - TCP only
+            - port - can be a range
+            - type: Group, Child, Single, Arn
+            - Definition - DNS IP or ARN
+
+
+
+
 ## TODO
 
 - ECS on EC2 service? cleanup
