@@ -16,8 +16,19 @@ resource "aws_vpclattice_service_network_vpc_association" "client" {
   }
 }
 
+resource "aws_vpclattice_service_network_vpc_association" "client_untrusted" {
+  vpc_identifier             = aws_vpc.client_untrusted.id
+  service_network_identifier = aws_vpclattice_service_network.demo.id
+
+  tags = {
+    Name = "client-untrusted-vpc-association"
+  }
+}
+
 data "aws_iam_policy_document" "demo_service_network_auth" {
+  # Allow all requests from trusted client VPC
   statement {
+    sid    = "AllowTrustedVPC"
     effect = "Allow"
 
     principals {
@@ -37,12 +48,37 @@ data "aws_iam_policy_document" "demo_service_network_auth" {
       ]
     }
   }
+
+  # Only allow specific EC2 instance from untrusted VPC
+  statement {
+    sid    = "AllowSpecificInstanceFromUntrustedVPC"
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.ec2_untrusted_role.arn]
+    }
+
+    actions = ["vpc-lattice-svcs:Invoke"]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "vpc-lattice-svcs:SourceVpc"
+      values = [
+        aws_vpc.client_untrusted.id,
+      ]
+    }
+  }
 }
 
 
 data "aws_iam_policy_document" "random_service_auth" {
+
+    # Allow all requests from trusted client VPC
   statement {
-    sid    = "AllowClientVPC"
+    sid    = "AllowTrustedVPC"
     effect = "Allow"
 
     principals {
@@ -57,7 +93,30 @@ data "aws_iam_policy_document" "random_service_auth" {
     condition {
       test     = "StringEquals"
       variable = "vpc-lattice-svcs:SourceVpc"
-      values   = [aws_vpc.client.id]
+      values = [
+        aws_vpc.client.id,
+      ]
+    }
+  }
+
+  statement {
+    sid    = "AllowClientVPC"
+    effect = "Allow"
+
+    principals {
+      type = "AWS"
+      # identifiers = ["*"]
+      identifiers = [aws_iam_role.ec2_untrusted_role.arn]
+    }
+
+    actions = ["vpc-lattice-svcs:Invoke"]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "vpc-lattice-svcs:SourceVpc"
+      values   = [aws_vpc.client_untrusted.id]
     }
   }
 }

@@ -6,6 +6,9 @@ Basic Hello World demo of AWS VPC Lattice with Terraform:
 - Lambda Function in "vpc-goodbye" returning "Goodbye"
 - VPC Lattice Service "random-service" which forwards traffic to both "hello" and "goodbye" targets
 - EC2 test instance in "vpc-client" used to invoke "random-service"
+    - this one has full access to the Service Network
+- EC2 test instance in "vpc-client-untrusted" used to invoke "random-service"
+    - only has access to the one Random service, requiring IAM auth
 - redis/valkey instance in "vpc-redis" just running an Elasticsearch endpoint
     - this is to demo the Resource Configuration type of VPC Lattice, rather than traditional VPC layer 7 type. Resource Configuration supports TCP directly
 
@@ -35,6 +38,17 @@ aws ssm start-session --target $INSTANCE_ID
 snra-0288f748319cecde5.rcfg-061bb95e7c2d2f44c.4232ccc.vpc-lattice-rsc.us-east-1.on.aws:6379> ping
 PONG
 ```
+
+IAM Auth for "untrusted" VPC:
+
+```
+[root@ip-10-0-1-30 ~]# python3 /home/ec2-user/test.py https://random-service-0ae9f759414f7d7a7.7d67968.vpc-lattice-svcs.us-east-1.on.aws
+<!DOCTYPE html>
+<html>
+...
+```
+
+note: custom python script to do SigV4 auth. `awscurl` seems to require body be signed, but Lattice doesn't do that. `curl` native requires more setup
 
 ## Notes
 
