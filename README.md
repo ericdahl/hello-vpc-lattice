@@ -43,6 +43,7 @@ PONG
     - EKS
     - Lambda
 - IAM
+    - service-to-service lockdown via IAM policies on the Lattice Service is possible, but then requires client to SigV4 sign APIs which would require significant cahnges to legacy codebases
 - Internet Ingress not directly supported
     - requires setting up ALB or NLB and forwarding to proxy, e.g., nginx
         - see <https://github.com/aws-solutions-library-samples/guidance-for-external-connectivity-amazon-vpc-lattice>
@@ -56,6 +57,11 @@ PONG
     - allows clients within this VPC to access service network
     - optional security groups
     - a VPC can only be _associated_ to one service network
+    - results in DNS lookups to Service DNS going to `169.254.171.0/24` or similar
+        - VPC route table has these inserted with Target=VpcLattice:
+            - `169.254.171.0/24`
+            - `129.224.0.0/17`
+            - `fd00:ec2:80::/64`
 - Service Network VPC Endpoint
     - similar but using standard PrivateLink endpoints
     - enables VPC to connect to one _or more_ service networks
